@@ -131,8 +131,9 @@ dmypy.json
 TODO.md
 config.py
 account.session
-JoeBidensek_online.csv
-JoeBidensek_time_status.csv
+bidenjoek_online.csv
+bidenjoek_time_status.csv
 trumpdonalds_online.csv
 trumpdonalds_time_status.csv
 .vscode/
+intersect.csv

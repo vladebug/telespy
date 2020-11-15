@@ -84,6 +84,30 @@ async def write_csv_online_status(dict_data, username, keys):
         writer.writerows([dict_data])
 
 """
+Функция формирует csv файлы с одновременным нахождением в онлайне
+Например:
+.......
+"""
+async def write_csv_intersect(dict_data, keys):
+    try:
+        df = pd.read_csv('intersect.csv', sep=',')
+        if not any(df.intersec_start == dict_data['intersec_start']):
+            #print(any(df1.entry == dict_status['entry']))
+            with open('intersect.csv', 'a', encoding='utf-8', newline='') as csv_file:
+                writer = csv.DictWriter(csv_file, keys, delimiter=',')
+                writer.writerows([dict_data])
+                print("Появилось новое пересечение онлайна!")
+                print(dict_data)
+        del df
+    except FileNotFoundError:
+        with open('intersect.csv', 'a', encoding='utf-8', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, keys, delimiter=',')
+            flag_csv_empty = os.stat('intersect.csv').st_size == 0
+            if flag_csv_empty:
+                writer.writeheader()
+            writer.writerows([dict_data])
+
+"""
 Функция преобразовывает csv файлы с метками времени пользователей в csv файлы с промежутками онлайн статуса пользователей и временем нахождения в сети
 """
 async def parse_csv_time_status(username):
@@ -112,7 +136,7 @@ async def parse_csv_time_status(username):
                 try:
                     df1 = pd.read_csv('{}_online.csv'.format(username), sep=',')
                     if not any(df1.entry == dict_status['entry']):
-                        print(any(df1.entry == dict_status['entry']))
+                        print("{} был в сети {} сек. с {} по {}".format(username, dict_status['session_duration'],dict_status['entry'], dict_status['exit']))
                         await write_csv_online_status(dict_status, username, keys)
                     del df1
                 except FileNotFoundError:
@@ -123,16 +147,70 @@ async def parse_csv_time_status(username):
                     'session_duration' : None
                 }
         del df
-        await asyncio.sleep(2)
+        await asyncio.sleep(6)
 
 
 """
 !TODO
-Функция преобразовывает ищет пересечения онлайн статусов пользователей
+Функция находит пересечения дат онлайн статусов пользователей в csv файлах с промежутками онлайн статуса и временем нахождения в сети
 """
-async def parce_csv_intersection(username):
-    pass
+async def parce_csv_intersection(username1, username2):
+    while True:
+        df1 = pd.read_csv('{}_online.csv'.format(username1), sep=',')
+        df2 = pd.read_csv('{}_online.csv'.format(username2), sep=',')
+        if len(df1.index) > len(df2.index):
+            await find_intesection(df1, df2)          
+        else:
+            await find_intesection(df2, df1)
+        del df1
+        del df2
+        await asyncio.sleep(10)
 
+"""
+Функция находит пересечения дат
+return дата начала пересечения, дата конца пересечения
+"""
+async def has_overlap(A_start, A_end, B_start, B_end):
+    latest_start = max(A_start, B_start)
+    earliest_end = min(A_end, B_end)
+    if latest_start <= earliest_end:
+        return latest_start, earliest_end
+
+"""
+Функция создаёт словарь с датами, которые пересекаются и общим временем пересечения
+return словарь, например:
+{'intersec_start': '14-11-2020 22:46:17', 'intersec_end': '14-11-2020 22:46:37', 'session_duration': 20.0}
+"""
+async def make_dict_overlap(overlaps_date_start, overlaps_date_end):
+    session_duration = time.mktime(datetime.strptime(overlaps_date_end, '%d-%m-%Y %H:%M:%S').timetuple()) - time.mktime(datetime.strptime(overlaps_date_start, '%d-%m-%Y %H:%M:%S').timetuple())
+    if session_duration > 0:
+        dict_overlap = {
+            'intersec_start' : overlaps_date_start,
+            'intersec_end' : overlaps_date_end,
+            'session_duration' : session_duration
+        }
+        return dict_overlap
+    else:
+        return None
+
+"""
+Функция ищет пересечения по датам в двух датафреймах
+return словарь, например:
+{'intersec_start': '14-11-2020 22:46:17', 'intersec_end': '14-11-2020 22:46:37', 'session_duration': 20.0}
+"""
+async def find_intesection(df1, df2):
+    for index_df1 in range(len(df1.index)):
+        date_entry_1 = df1.loc[index_df1, 'entry']
+        date_exit_1 = df1.loc[index_df1, 'exit']
+        for index_df2 in range(len(df2.index)):
+            date_entry_2 = df2.loc[index_df2, 'entry']
+            date_exit_2 = df2.loc[index_df2, 'exit']
+            overlaps_date = await has_overlap(date_entry_1, date_exit_1, date_entry_2, date_exit_2)
+            if overlaps_date:
+                dict_overlap = await make_dict_overlap(overlaps_date[0], overlaps_date[1])
+                if dict_overlap:
+                    keys = ['intersec_start', 'intersec_end', 'session_duration']
+                    await write_csv_intersect(dict_overlap, keys)
 
 """
 Функция для постоянного мониторинга онлайн статуса пользователей telegram
@@ -155,7 +233,7 @@ async def status_user_monitor(username):
             dict_timestamp_status['timestamp'] = now_time.timestamp()
             dict_timestamp_status['online'] = False
             await write_csv_timestamp(dict_timestamp_status, username, keys)
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
 
 
 def menu():
@@ -182,6 +260,7 @@ async def main(loop):
             loop.create_task(status_user_monitor(username2))
             loop.create_task(parse_csv_time_status(username1))
             loop.create_task(parse_csv_time_status(username2))
+            loop.create_task(parce_csv_intersection(username1, username2))
         else:
             print('Номера телефона ещё нет в telegram или пользователь сменил настройки конфиденциальности!')
     elif item_menu == 2:
