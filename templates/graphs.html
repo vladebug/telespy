@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html  lang="ru" dir="ltr">
+<head>
+    <meta charset="utf-8">
+
+    <title>TeleSpy</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
+    <script src="static/js/graph.js"></script>
+
+    <link href="static/main.css" rel="stylesheet" type="text/css" media="all">
+
+</head>
+
+<body>
+    <div id="container">
+        <script>
+            buildgraph('{{ username1 }}', '{{ username_concat }}', 'container');
+        </script>
+    </div>
+    <br>
+    <div id="container2">
+        <script>
+            buildgraph('{{ username2 }}', '{{ username_concat }}', 'container2');
+        </script>
+    </div>
+    <br>
+    <div id="container3">
+        <script>
+            buildgraph('{{ username_concat }}', '{{ username_concat }}', 'container3');
+        </script>
+    </div>
+    <br>
+    {%if summary%}
+    <div class="box_chance">
+        <h1>{{ summary }}</h1>
+        <h1>{{ str_chance }}</h1>
+    </div>
+    {%endif%}
+</body>
+
+</html>

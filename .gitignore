@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 TODO.md
-config.py
 account.session
 bidenjoek_online.csv
 bidenjoek_time_status.csv

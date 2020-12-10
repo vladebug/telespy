@@ -1,0 +1,65 @@
+body,
+input,
+textarea,
+select {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  color: #4c4c4c;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 300;
+  color: #4c4c4c;
+  text-align: center;
+  padding-top: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.box h2{
+  text-align: center;
+  margin-top: 30px;
+}
+
+.box {
+  margin: 20px auto;
+  width: 510px; 
+  height: 160px; 
+  -webkit-border-radius: 8px/7px; 
+  -moz-border-radius: 8px/7px; 
+  border-radius: 8px/7px; 
+  background-color: white; 
+  -webkit-box-shadow: 1px 2px 5px grey; 
+  -moz-box-shadow: 1px 2px 5px grey; 
+  box-shadow: 1px 2px 5px grey; 
+  border: solid 2px rgb(5, 26, 95);
+}
+
+.box_chance {
+  margin: 20px auto;
+  width: auto; 
+  height: auto; 
+  -webkit-border-radius: 8px/7px; 
+  -moz-border-radius: 8px/7px; 
+  border-radius: 8px/7px; 
+  background-color: white; 
+  -webkit-box-shadow: 1px 2px 5px grey; 
+  -moz-box-shadow: 1px 2px 5px grey; 
+  box-shadow: 1px 2px 5px grey; 
+  border: solid 2px rgb(5, 26, 95);
+}
+
+.footer h4{
+  text-align: right;
+  margin-right: 30%;
+  margin-top: 30px;
+}
+
+
+input{
+  margin-top: 12px;
+  margin-left: 10%;
+  margin-right:10%;
+  width: 415px;
+}

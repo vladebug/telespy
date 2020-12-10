@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <link href="static/main.css" rel="stylesheet" type="text/css" media="all">
+</head>
+    <body>
+      <h1 style="text-align:center;">TeleSpy App Graph</h1>
+    	<div class="box">
+  			<h1>Введите имя директории с данными</h1>
+  			<form action="/" method="post">
+    			<input type="text" name="directory" id="directory" placeholder="Название директории" required/>
+    			<br>
+                <input type="submit" class="button" value="Построить графики"/>
+                {%if not_exist_directory%}
+                <h1 style="text-align:center;color:red">Такой директории не существует!</h1>
+                {%endif%}
+  			</form>
+        </div>
+</body>
+</html>
