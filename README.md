@@ -10,6 +10,10 @@
         pip install -r requirements.txt
 3. Добавить в файл config.py данные telegram аккаунта.
 
+Презентация проекта
+------------
+https://vk.cc/bVVgxw
+
 Использование
 ------------
 
