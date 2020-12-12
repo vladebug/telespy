@@ -8,7 +8,7 @@
 2. Установите все необходимые зависимости.
 
         pip install -r requirements.txt
-3. Добавить в файл config.py данные telegram аккаунта.
+3. Добавить в файл config.py данные telegram аккаунта. (Получить API key можно [здесь](https://my.telegram.org/auth?to=apps))
 
 Презентация проекта
 ------------
